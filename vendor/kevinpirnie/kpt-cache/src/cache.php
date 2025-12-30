@@ -1250,7 +1250,7 @@ if (! class_exists('Cache')) {
 
                 if ($opcache_stats) {
                     // Get the base path of the current application
-                    $app_base_path = defined('KPT_PATH') ? dirname(KPT_PATH) : getcwd();
+                    $app_base_path = defined('KPTV_PATH') ? dirname(KPTV_PATH) : getcwd();
 
                     // Filter scripts to only include those from current application
                     $filtered_scripts = [];

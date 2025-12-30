@@ -13,6 +13,9 @@
 // define the primary app path if not already defined
 defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
 
+// call in the router!
+use KPT\Router;
+
 // make sure the class does not already exist
 if( ! class_exists( 'KPTV_Static' ) ) {
 
@@ -69,6 +72,135 @@ if( ! class_exists( 'KPTV_Static' ) ) {
             //return the difference between the 2 dates
             return date_diff( date_create( $_date1 ), date_create( $_date2 ) ) -> format( '%a' );
         
+        }
+
+
+        public static function active_link( string $which ) : string {
+
+            $route = Router::getCurrentRoute( );
+            $route_path = $route -> path;
+
+            // hold the routes to match
+            $routes = [
+                'home' => ['/'],
+                'info' => ['/users/faq', '/streams/faq', '/terms-of-use'],
+                'admin' => ['/admin/users'],
+                'account' => ['/users/changepass', '/users/login', '/users/register', '/users/forgot'],
+                'streams' => [
+                    '/streams/live/all', '/streams/live/active', '/streams/live/inactive',
+                    '/streams/series/all', '/streams/series/active', '/streams/series/inactive',
+                    '/streams/vod/all', '/streams/vod/active', '/streams/vod/inactive',
+                ],
+            ];
+
+            // return the active class on the match
+            return isset($routes[$which]) && in_array($route_path, $routes[$which], true) 
+                ? 'uk-active' 
+                : '';
+
+        }
+
+
+        public static function open_link( string $which ) : string {
+
+            $route = Router::getCurrentRoute( );
+            $route_path = $route -> path;
+            
+            // hold the routes to match
+            $routes = [
+                'info' => ['/users/faq', '/streams/faq', '/terms-of-use'],
+                
+                'account' => ['/users/changepass', '/users/login', '/users/register', '/users/forgot'],
+                'live' => ['/streams/live/all', '/streams/live/active', '/streams/live/inactive',],
+                'series' => ['/streams/series/all', '/streams/series/active', '/streams/series/inactive',],
+                'vod' => ['/streams/vod/all', '/streams/vod/active', '/streams/vod/inactive',],
+            ];
+            
+            // return the active class on the match
+            return isset( $routes[$which] ) && in_array( $route_path, $routes[$which] ) 
+                ? 'uk-open' 
+                : '';
+
+        }
+
+
+        public static function get_counts( ) : array {
+
+            // get the users ID
+            $user_id = KPTV_User::get_current_user( ) -> id;
+
+            // stream count sql
+            $stream_ct_qry = "SELECT 
+                COUNT(id) as total_streams,
+                SUM(CASE WHEN s_active = 1 AND s_type_id = 0 THEN 1 ELSE 0 END) as active_live,
+                SUM(CASE WHEN s_active = 1 AND s_type_id = 5 THEN 1 ELSE 0 END) as active_series,
+                SUM(CASE WHEN s_active = 1 AND s_type_id = 4 THEN 1 ELSE 0 END) as active_vod
+            FROM kptv_streams
+            WHERE u_id = ?";
+
+            // provider count sql
+            $provider_ct_qry = "SELECT 
+                sp.sp_name as provider_name,
+                COUNT(s.id) as total_streams,
+                SUM(CASE WHEN s.s_active = 1 AND s.s_type_id = 0 THEN 1 ELSE 0 END) as active_live,
+                SUM(CASE WHEN s.s_active = 1 AND s.s_type_id = 5 THEN 1 ELSE 0 END) as active_series,
+                SUM(CASE WHEN s.s_active = 1 AND s.s_type_id = 4 THEN 1 ELSE 0 END) as active_vod
+            FROM kptv_stream_providers sp
+            LEFT JOIN kptv_streams s ON sp.id = s.p_id AND s.u_id = ?
+            WHERE sp.u_id = ?
+            GROUP BY sp.id, sp.sp_name
+            ORDER BY sp.sp_priority, sp.sp_name;";
+
+            // fire up the database class
+            $db = new \KPT\Database( self::get_setting( 'database' ) );
+
+            // run the queries
+            $strm_ct = $db->query($stream_ct_qry)
+                        ->bind([$user_id])
+                        ->single()
+                        ->fetch();
+            $prov_ct = $db->query($provider_ct_qry)
+                        ->bind([$user_id, $user_id])
+                        ->fetch();
+
+            // setup the return data
+            $ret = [
+                'total' => $strm_ct -> total_streams,
+                'live' => $strm_ct -> active_live,
+                'series' => $strm_ct -> active_series,
+                'vod' => $strm_ct -> active_vod,
+                'per_provider' => $prov_ct,
+            ];
+
+            // clean up
+            unset( $prov_ct, $strm_ct, $db );
+
+            // return
+            return $ret;
+        }
+
+        public static function time_ago( string $datetime ) : string {
+            $time = strtotime($datetime);
+            $diff = time() - $time;
+            
+            if ($diff < 60) {
+                return $diff . ' Seconds Ago';
+            }
+            
+            if ($diff < 3600) {
+                return floor($diff / 60) . ' Minutes Ago';
+            }
+            
+            if ($diff < 86400) {
+                return floor($diff / 3600) . ' Hours Ago';
+            }
+            
+            if ($diff < 604800) {
+                return floor($diff / 86400) . ' Days Ago';
+            }
+            
+            // Beyond a week, show the date
+            return date('M j', $time);
         }
 
         /** 

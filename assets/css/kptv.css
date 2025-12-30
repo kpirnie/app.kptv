@@ -182,7 +182,7 @@ a:focus {
 .kptv-navbar-container {
     max-width: 100%;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 0 20px;
 }
 
 .kptv-navbar-toggle {
@@ -315,7 +315,7 @@ a:focus {
 .kptv-offcanvas-nav>li>a {
     color: var(--kptv-orange) !important;
     font-family: 'Rajdhani', sans-serif;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     padding: 12px 0;
     border-bottom: 1px solid var(--kptv-circuit);
@@ -392,7 +392,7 @@ a:focus {
    MAIN CONTENT
    ============================================ */
 .kptv-main {
-    padding: 20px 15px;
+    padding: 20px;
     max-width: 100%;
     margin: 0 auto;
 }
@@ -910,7 +910,6 @@ a:focus {
 .kptv-footer p {
     color: var(--kptv-gray);
     margin: 0;
-    font-size: 0.9rem;
 }
 
 /* ============================================
@@ -988,9 +987,6 @@ a:focus {
    RESPONSIVE
    ============================================ */
 @media (min-width: 576px) {
-    .kptv-main {
-        padding: 25px 20px;
-    }
 
     .kptv-stat-value {
         font-size: 3rem;
@@ -1006,10 +1002,6 @@ a:focus {
         font-size: 1.3rem;
     }
 
-    .kptv-main {
-        padding: 30px;
-    }
-
     .kptv-card {
         padding: 25px;
     }
@@ -1021,6 +1013,7 @@ a:focus {
     .kptv-hidden-desktop {
         display: none;
     }
+
 }
 
 @media (min-width: 992px) {
@@ -1028,16 +1021,468 @@ a:focus {
         font-size: 1.05rem;
         padding: 22px 18px;
     }
-}
 
-@media (min-width: 1200px) {
-    .kptv-main {
-        padding: 40px;
-    }
 }
 
 .uk-heading-bullet::before,
 .uk-divider-icon::before,
 .uk-divider-icon::after {
     border-color: var(--kptv-cyan) !important;
+}
+
+/* Dual-color UIKit icons - cyan fill with orange stroke */
+[uk-icon] svg,
+[class*="uk-icon"] svg,
+.uk-icon svg {
+    color: var(--kptv-orange) !important;
+    stroke: var(--kptv-cyan-light) !important;
+}
+
+.kptv-icon-dual svg *:nth-child(even) {
+    stroke: var(--kptv-cyan-light) !important;
+}
+
+.min-stroke svg {
+    stroke-width: 0.5 !important;
+}
+
+.dark-stroke svg {
+    color: var(--kptv-dark-navy) !important;
+}
+
+.uk-offcanvas-close {
+    top: 10px !important;
+    right: 10px !important;
+    cursor: pointer;
+}
+
+.uk-nav-header {
+    font-size: 1.1rem !important;
+}
+
+.kptv-sidebar-nav .uk-nav-header,
+.uk-nav-default {
+    font-size: 1rem !important;
+}
+
+/* ============================================
+   UIKIT OVERRIDES - ALERTS
+   ============================================ */
+.uk-alert {
+    background: var(--kptv-navy);
+    color: var(--kptv-white);
+    border: 1px solid var(--kptv-cyan);
+    border-radius: 4px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.uk-alert-close {
+    color: var(--kptv-white) !important;
+    opacity: 0.7;
+}
+
+.uk-alert-close:hover {
+    opacity: 1;
+}
+
+.uk-alert-primary,
+.uk-alert-info {
+    background: rgba(61, 139, 189, 0.15);
+    border-color: var(--kptv-cyan);
+    color: var(--kptv-cyan-light);
+}
+
+.uk-alert-success {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: var(--kptv-success);
+    color: var(--kptv-success);
+}
+
+.uk-alert-warning {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: var(--kptv-warning);
+    color: var(--kptv-warning);
+}
+
+.uk-alert-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: var(--kptv-danger);
+    color: var(--kptv-danger);
+}
+
+.uk-alert a {
+    color: inherit !important;
+    text-decoration: underline;
+}
+
+.uk-alert a:hover {
+    opacity: 0.8;
+}
+
+.uk-alert h1,
+.uk-alert h2,
+.uk-alert h3,
+.uk-alert h4,
+.uk-alert h5,
+.uk-alert h6 {
+    color: inherit;
+}
+
+/* ============================================
+   UIKIT OVERRIDES - NOTIFICATIONS (Popups)
+   ============================================ */
+.uk-notification-message {
+    background: var(--kptv-navy) !important;
+    color: var(--kptv-white) !important;
+    border: 1px solid var(--kptv-cyan);
+    border-radius: 4px;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.uk-notification-message-primary {
+    background: rgba(61, 139, 189, 0.5) !important;
+    border-color: var(--kptv-cyan) !important;
+    color: var(--kptv-white) !important;
+}
+
+.uk-notification-message-success {
+    background: rgba(34, 197, 94, 0.5) !important;
+    border-color: var(--kptv-success) !important;
+    color: var(--kptv-white) !important;
+}
+
+.uk-notification-message-warning {
+    background: rgba(245, 158, 11, 0.5) !important;
+    border-color: var(--kptv-warning) !important;
+    color: var(--kptv-white) !important;
+}
+
+.uk-notification-message-danger {
+    background: rgba(239, 68, 68, 0.5) !important;
+    border-color: var(--kptv-danger) !important;
+    color: var(--kptv-white) !important;
+}
+
+.uk-notification-close,
+.uk-notification-close svg {
+    color: var(--kptv-white) !important;
+    opacity: 0.7;
+}
+
+.uk-notification-close:hover {
+    opacity: 1;
+}
+
+/* ============================================
+   UIKIT OVERRIDES - MODALS
+   ============================================ */
+.uk-modal-dialog {
+    background: var(--kptv-navy) !important;
+    color: var(--kptv-white);
+    border: 1px solid var(--kptv-cyan);
+    border-radius: 8px;
+}
+
+.uk-modal-header {
+    background: var(--kptv-dark-navy) !important;
+    border-bottom: 1px solid var(--kptv-cyan);
+    border-radius: 8px 8px 0 0;
+}
+
+.uk-modal-header .uk-modal-title {
+    color: var(--kptv-cyan-light) !important;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.uk-modal-body {
+    background: var(--kptv-navy) !important;
+    color: var(--kptv-white);
+}
+
+.uk-modal-footer {
+    background: var(--kptv-dark-navy) !important;
+    border-top: 1px solid var(--kptv-cyan);
+    border-radius: 0 0 8px 8px;
+}
+
+.uk-modal-close-default,
+.uk-modal-close-outside,
+.uk-modal-close-full,
+.uk-modal-close {
+    color: var(--kptv-white) !important;
+}
+
+.uk-modal-close-default:hover,
+.uk-modal-close-outside:hover,
+.uk-modal-close-full:hover {
+    color: var(--kptv-orange) !important;
+}
+
+/* ============================================
+   UIKIT OVERRIDES - LABELS & BADGES
+   ============================================ */
+.uk-label {
+    background: var(--kptv-cyan) !important;
+    color: var(--kptv-dark-navy) !important;
+}
+
+.uk-label-success {
+    background: var(--kptv-success) !important;
+    color: var(--kptv-dark-navy) !important;
+}
+
+.uk-label-warning {
+    background: var(--kptv-warning) !important;
+    color: var(--kptv-dark-navy) !important;
+}
+
+.uk-label-danger {
+    background: var(--kptv-danger) !important;
+    color: var(--kptv-white) !important;
+}
+/* ============================================
+   UIKIT OVERRIDES - FORM FIELDS
+   ============================================ */
+.uk-input,
+.uk-select,
+.uk-textarea,
+.uk-radio,
+.uk-checkbox,
+.uk-range {
+    background: var(--kptv-dark-navy) !important;
+    border: 1px solid var(--kptv-cyan) !important;
+    color: var(--kptv-white) !important;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.uk-input:focus,
+.uk-select:focus,
+.uk-textarea:focus {
+    background: var(--kptv-dark-navy) !important;
+    border-color: var(--kptv-orange) !important;
+    color: var(--kptv-white) !important;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.25);
+}
+
+.uk-input::placeholder,
+.uk-textarea::placeholder {
+    color: var(--kptv-gray) !important;
+}
+
+.uk-input:disabled,
+.uk-select:disabled,
+.uk-textarea:disabled {
+    background: var(--kptv-navy) !important;
+    border-color: var(--kptv-blue) !important;
+    color: var(--kptv-gray) !important;
+    opacity: 0.7;
+}
+
+/* Select dropdown arrow */
+.uk-select:not([multiple]):not([size]) {
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline fill='none' stroke='%23ff6b35' stroke-width='1.5' points='1 4 6 9 11 4'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: calc(100% - 12px) center !important;
+    background-size: 12px 12px !important;
+    padding-right: 36px !important;
+}
+
+/* Select options */
+.uk-select option {
+    background: var(--kptv-dark-navy);
+    color: var(--kptv-white);
+}
+
+/* Checkbox and Radio */
+.uk-checkbox,
+.uk-radio {
+    width: 18px;
+    height: 18px;
+    margin-top: 0;
+    vertical-align: middle;
+}
+
+.uk-checkbox:checked,
+.uk-radio:checked {
+    background-color: var(--kptv-orange) !important;
+    border-color: var(--kptv-orange) !important;
+}
+
+.uk-checkbox:checked {
+    background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 14 14' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline fill='none' stroke='%230a1628' stroke-width='2' points='3 7 6 10 11 4'/%3E%3C/svg%3E") !important;
+}
+
+.uk-radio:checked {
+    background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 14 14' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle fill='%230a1628' cx='7' cy='7' r='3'/%3E%3C/svg%3E") !important;
+}
+
+.uk-checkbox:focus,
+.uk-radio:focus {
+    border-color: var(--kptv-orange) !important;
+    box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.25);
+}
+
+.uk-checkbox:indeterminate {
+    background-color: var(--kptv-cyan) !important;
+    border-color: var(--kptv-cyan) !important;
+}
+
+/* Range slider */
+.uk-range {
+    background: transparent !important;
+    border: none !important;
+}
+
+.uk-range::-webkit-slider-runnable-track {
+    background: var(--kptv-blue);
+    border-radius: 4px;
+}
+
+.uk-range::-webkit-slider-thumb {
+    background: var(--kptv-orange);
+    border: none;
+}
+
+.uk-range::-moz-range-track {
+    background: var(--kptv-blue);
+    border-radius: 4px;
+}
+
+.uk-range::-moz-range-thumb {
+    background: var(--kptv-orange);
+    border: none;
+}
+
+/* Form labels */
+.uk-form-label {
+    color: var(--kptv-cyan-light) !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Form icons */
+.uk-form-icon {
+    color: var(--kptv-gray) !important;
+}
+
+.uk-form-icon:hover {
+    color: var(--kptv-orange) !important;
+}
+
+/* Fieldset and legend */
+.uk-fieldset {
+    border: 1px solid var(--kptv-cyan);
+    border-radius: 4px;
+    padding: 20px;
+    background: rgba(15, 40, 71, 0.5);
+}
+
+.uk-legend {
+    color: var(--kptv-cyan-light) !important;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    padding: 0 10px;
+}
+
+/* Form states */
+.uk-form-danger,
+.uk-form-danger:focus {
+    border-color: var(--kptv-danger) !important;
+    color: var(--kptv-white) !important;
+}
+
+.uk-form-success,
+.uk-form-success:focus {
+    border-color: var(--kptv-success) !important;
+    color: var(--kptv-white) !important;
+}
+
+/* Form sizing */
+.uk-form-small {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+}
+
+.uk-form-large {
+    font-size: 1.1rem;
+    padding: 14px 18px;
+}
+
+/* Form width modifiers */
+.uk-form-width-xsmall,
+.uk-form-width-small,
+.uk-form-width-medium,
+.uk-form-width-large {
+    background: var(--kptv-dark-navy) !important;
+}
+
+/* Form stacked/horizontal labels */
+.uk-form-stacked .uk-form-label {
+    margin-bottom: 8px;
+    display: block;
+}
+
+.uk-form-horizontal .uk-form-label {
+    padding-top: 10px;
+}
+
+/* Toggle switch (if using) */
+.uk-toggle-switch {
+    background: var(--kptv-blue) !important;
+    border-color: var(--kptv-cyan) !important;
+}
+
+.uk-toggle-switch:checked {
+    background: var(--kptv-orange) !important;
+    border-color: var(--kptv-orange) !important;
+}
+.uk-button {
+    font-size: 1.1rem !important;
+    padding:3px 20px 1px !important;
+}
+
+/* ============================================
+   BUTTON ICON VERTICAL ALIGNMENT FIX
+   ============================================ */
+.uk-button,
+.kptv-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.uk-button [uk-icon],
+.uk-button .uk-icon,
+.uk-button svg,
+.kptv-btn [uk-icon],
+.kptv-btn .uk-icon,
+.kptv-btn svg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* Ensure icon SVGs don't have extra spacing */
+.uk-button svg,
+.kptv-btn svg {
+    flex-shrink: 0;
+    margin: 0;
+}
+.uk-form-icon {
+  color: var(--kptv-gray) !important;
+}
+
+.kptv-badge-primary {
+    background: rgba(122, 181, 205, 0.15);
+    color: #7ab5cd;
+    border: 1px solid #7ab5cd;
 }

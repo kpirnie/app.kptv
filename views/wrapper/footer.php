@@ -16,7 +16,7 @@ use KPT\DataTables\DataTables;
 defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
 ?>
                 <?php if( '/terms-of-use' != Router::getCurrentRoute( ) -> path ) { ?>
-                    <div>
+                    <div class="uk-margin-large uk-margin-remove-bottom">
                         <div class="uk-alert-primary uk-padding uk-margin-remove" uk-alert>
                             <h3 class="uk-heading-bullet uk-margin-remove-top">Important Legal Notice</h3>
                             <p>This platform is intended for legitimate IPTV management purposes only. Users are responsible for ensuring they have proper legal authorization for any content, streams, or media they manage through this service. We do not host, store, or distribute any media content - this is strictly an organizational tool for legally obtained IPTV subscriptions.</p>
@@ -40,7 +40,7 @@ defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
 
         <!-- Scroll to Top Button -->
         <button id="kptv-scroll-top" class="kptv-scroll-top" title="Scroll to top">
-            <span uk-icon="chevron-up"></span>
+            <span uk-icon="chevron-up" class="dark-stroke"></span>
         </button>
 
         <div id="vid_modal" class="uk-flex-top vid-modal" uk-modal>
@@ -56,11 +56,10 @@ defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
         </div>
 
         <!-- UIKit JS -->
-        <script src="//cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit.min.js"></script>
-        <script src="//cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit-icons.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit.min.js" defer></script>
+        <script src="//cdn.jsdelivr.net/npm/uikit@latest/dist/js/uikit-icons.min.js" defer></script>
         <?php echo DataTables::getJsIncludes(); ?>
-        <script src="/assets/js/kptv.min.js"></script>
-        <script type="text/javascript" src="/assets/js/video.js?_=<?php echo time( ); ?>"></script>
-        <script type="text/javascript" src="/assets/js/custom.js?_=<?php echo time( ); ?>"></script>
+        <script src="/assets/js/kptv.min.js" defer></script>
+        <script type="text/javascript" src="/assets/js/custom.js?_=<?php echo time( ); ?>" defer><script>
     </body>
 </html>

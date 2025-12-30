@@ -13,12 +13,20 @@
 // define the primary app path if not already defined
 defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
 
-use KPT\KPT;
+// call in the router!
 use KPT\Router;
 
 // get the route we're in
 $current_route = Router::getCurrentRoute( );
 
+// get ther user id for the export
+$user_for_export = KPTV::encrypt( ( KPTV_User::get_current_user( ) -> id ) ?? 0 );
+
+// get the user role
+$user_role = ( KPTV_User::get_current_user( ) -> role ) ?? 0;
+
+// hold the route path
+$route_path = $current_route -> path;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,32 +48,26 @@ $current_route = Router::getCurrentRoute( );
         <link rel="icon" type="image/png" href="/assets/images/kptv-icon.png" />
     </head>
     <body uk-height-viewport="offset-top: true">
-
         <?php
-        // main navigation
-        include KPTV_PATH . 'views/wrapper/nav-main.php';
-
-        // mobile nav
-        include KPTV_PATH . 'views/wrapper/nav-mobile.php';
+            // main navigation
+            include KPTV_PATH . 'views/wrapper/nav-main.php';
         ?>
-
         <div uk-grid class="uk-grid-collapse uk-flex-1" uk-height-viewport="expand: true">
-
             <?php
-            // include the sidebar
-            include KPTV_PATH . 'views/wrapper/sidebar.php';
+                // include the sidebar
+                include KPTV_PATH . 'views/wrapper/sidebar.php';
             ?>
             <div class="uk-width-expand">
                 <main class="kptv-main">
                 <?php
-                // if there is a message to be shown
-                if( isset( $_SESSION ) && isset( $_SESSION['page_msg'] ) ) {
+                    // if there is a message to be shown
+                    if( isset( $_SESSION ) && isset( $_SESSION['page_msg'] ) ) {
 
-                    // show the message
-                    KPTV::show_message( $_SESSION['page_msg']['type'], $_SESSION['page_msg']['msg'] );
+                        // show the message
+                        KPTV::show_message( $_SESSION['page_msg']['type'], $_SESSION['page_msg']['msg'] );
 
-                    // remove it from the session
-                    unset( $_SESSION['page_msg'] );
+                        // remove it from the session
+                        unset( $_SESSION['page_msg'] );
 
-                }
+                    }
                 
