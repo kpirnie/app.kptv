@@ -861,10 +861,10 @@ a:focus {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    width: 50px;
-    height: 50px;
-    background: var(--kptv-orange);
-    border: none;
+    width: 36px;
+    height: 36px;
+    background: var(--kptv-navy);
+    border: 1px solid var(--kptv-cyan);
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -882,14 +882,13 @@ a:focus {
 }
 
 .kptv-scroll-top:hover {
-    background: var(--kptv-orange-hover);
-    transform: translateY(-3px);
+    background: var(--kptv-dark-navy);
+    transform: translateY(-2px);
 }
 
 .kptv-scroll-top svg {
     width: 24px;
     height: 24px;
-    stroke: var(--kptv-dark-navy);
 }
 
 /* ============================================

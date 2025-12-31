@@ -104,16 +104,6 @@ defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
                             </ul>
                         </div>
                     </li>
-                    <?php if( $user_role == 99 ): ?>
-                    <li class="<?php echo KPTV::active_link( 'admin' ); ?>">
-                        <a href="#">Admin <span uk-navbar-parent-icon></span></a>
-                        <div class="uk-navbar-dropdown">
-                            <ul class="uk-nav uk-navbar-dropdown-nav uk-nav-parent-icon">
-                                <li><a href="/admin/users">User Management</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    <?php endif; ?>
                 </ul>
             </div>
             

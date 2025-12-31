@@ -30,8 +30,6 @@ var DOMReady = function (callback) {
             this.initTableSort();
             this.initSearch();
             this.initPerPage();
-            this.initTooltips();
-            this.initConfirmActions();
             console.log('KPTV Stream Manager initialized');
         },
 
@@ -215,31 +213,6 @@ var DOMReady = function (callback) {
             const visibleRows = table.querySelectorAll('tbody tr:not([style*="display: none"])').length;
 
             countDisplay.textContent = 'Showing ' + visibleRows + ' of ' + totalRows + ' records';
-        },
-
-        // ============================================
-        // Initialize Tooltips
-        // ============================================
-        initTooltips: function () {
-            // UIkit handles tooltips automatically via uk-tooltip attribute
-            // This is just for any custom tooltip logic
-        },
-
-        // ============================================
-        // Confirm Actions (Delete, etc.)
-        // ============================================
-        initConfirmActions: function () {
-            const confirmBtns = document.querySelectorAll('[data-confirm]');
-
-            confirmBtns.forEach(function (btn) {
-                btn.addEventListener('click', function (e) {
-                    const message = this.dataset.confirm || 'Are you sure?';
-                    if (!confirm(message)) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                });
-            });
         },
 
         // ============================================

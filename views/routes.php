@@ -257,14 +257,6 @@ $get_stream_routes = [
 
 // Admin-related GET routes
 $get_admin_routes = [
-    // User management (admin only)
-    [
-        'method' => 'GET',
-        'path' => '/admin/users',
-        'middleware' => ['admin_required'],
-        'handler' => 'view:pages/admin/users.php'
-    ],
-
     // Legal notice
     [
         'method' => 'GET',
@@ -357,17 +349,6 @@ $post_stream_routes = [
         'path' => '/missing',
         'middleware' => ['auth_required'],
         'handler' => 'view:pages/stream/missing.php'
-    ],
-];
-
-// Admin-related POST routes
-$post_admin_routes = [
-    // Admin user management form submission
-    [
-        'method' => 'POST',
-        'path' => '/admin/users',
-        'middleware' => ['admin_required'],
-        'handler' => 'KPTV_User@handle_posts' // Class@Method
     ],
 ];
 

@@ -40,7 +40,7 @@ defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
 
         <!-- Scroll to Top Button -->
         <button id="kptv-scroll-top" class="kptv-scroll-top" title="Scroll to top">
-            <span uk-icon="chevron-up" class="dark-stroke"></span>
+            <span uk-icon="chevron-up"></span>
         </button>
 
         <div id="vid_modal" class="uk-flex-top vid-modal" uk-modal>
@@ -54,7 +54,9 @@ defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
                 </video>
             </div>
         </div>
-
+        <script type="text/javascript" src="//vjs.zencdn.net/8.6.1/video.min.js" defer></script>
+        <script type="text/javascript" src="//cdn.jsdelivr.net/npm/hls.js@latest" defer></script>
+        <script type="text/javascript" src="//cdn.jsdelivr.net/npm/mpegts.js@latest" defer></script>
         <?php echo DataTables::getJsIncludes( 'uikit', true ); ?>
         <script src="/assets/js/kptv.min.js" defer></script>
         <script type="text/javascript" src="/assets/js/custom.js?_=<?php echo time( ); ?>" defer><script>
