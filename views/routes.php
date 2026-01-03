@@ -214,14 +214,14 @@ $get_stream_routes = [
     [
         'method' => 'GET',
         'path' => '/player_api.php',
-        'handler' => 'KPTV_XtreamAPI@handleRequest',
+        'handler' => 'KPTV_Xtream_API@handleRequest',
         'should_cache' => false,
     ],
     // XtreamCodes API short endpoint
     [
         'method' => 'GET',
         'path' => '/xc',
-        'handler' => 'KPTV_XtreamAPI@handleRequest',
+        'handler' => 'KPTV_Xtream_API@handleRequest',
         'should_cache' => false,
     ],
 
@@ -229,7 +229,7 @@ $get_stream_routes = [
     [
         'method' => 'GET',
         'path' => '/api/xtream',
-        'handler' => 'KPTV_XtreamAPI@handleRequest',
+        'handler' => 'KPTV_Xtream_API@handleRequest',
         'should_cache' => false,
     ],
 
@@ -237,19 +237,19 @@ $get_stream_routes = [
     [
         'method' => 'GET',
         'path' => '/live/{username}/{password}/{streamId}',
-        'handler' => 'KPTV_XtreamAPI@handleStreamRedirect',
+        'handler' => 'KPTV_Xtream_API@handleStreamRedirect',
         'should_cache' => false,
     ],
     [
         'method' => 'GET',
         'path' => '/movie/{username}/{password}/{streamId}',
-        'handler' => 'KPTV_XtreamAPI@handleStreamRedirect',
+        'handler' => 'KPTV_Xtream_API@handleStreamRedirect',
         'should_cache' => false,
     ],
     [
         'method' => 'GET',
         'path' => '/series/{username}/{password}/{streamId}',
-        'handler' => 'KPTV_XtreamAPI@handleStreamRedirect',
+        'handler' => 'KPTV_Xtream_API@handleStreamRedirect',
         'should_cache' => false,
     ],
 
@@ -364,7 +364,6 @@ $routes = array_merge(
     $get_admin_routes,
     $post_user_routes,
     $post_stream_routes,
-    $post_admin_routes
 );
 
 // =============================================================
