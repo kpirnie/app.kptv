@@ -27,16 +27,18 @@ $active_value = $valid_active[$active_filter] ?? null;
 $userId = KPTV_User::get_current_user( ) -> id;
 
 // setup the actions
+// setup the actions
 $actionGroups = [
     'live' => [
-        ['html' => '<br class="action-nl" />',], 
+        'html' => [
+            'location' => 'both',
+            'content' => '<br class="action-nl" />'
+        ],
         'moveseries' => [
             'icon' => 'album',
             'title' => 'Move This Stream to Series Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
                 return KPTV::moveToType( $database, $rowId, 5, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
@@ -46,11 +48,9 @@ $actionGroups = [
         'movevod' => [
             'icon' => 'video-camera',
             'title' => 'Move This Stream to VOD Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
-                return KPTV::moveToType( $database, $rowId, 5, 'liveorseries' );
+                return KPTV::moveToType( $database, $rowId, 4, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -59,10 +59,8 @@ $actionGroups = [
         'moveother' => [
             'icon' => 'nut',
             'title' => 'Move This Stream to Other Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
                 return KPTV::moveToType( $database, $rowId, 99, 'toother' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
@@ -71,15 +69,16 @@ $actionGroups = [
         ],
     ],
     'series' => [
-        ['html' => '<br class="action-nl" />',], 
+        'html' => [
+            'location' => 'both',
+            'content' => '<br class="action-nl" />'
+        ],
         'movelive' => [
             'icon' => 'tv',
             'title' => 'Move This Stream to Live Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
-                KPTV::moveToType( $database, $rowId, 0, 'liveorseries' );
+                return KPTV::moveToType( $database, $rowId, 0, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -88,11 +87,9 @@ $actionGroups = [
         'movevod' => [
             'icon' => 'video-camera',
             'title' => 'Move This Stream to VOD Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
-                return KPTV::moveToType( $database, $rowId, 5, 'liveorseries' );
+                return KPTV::moveToType( $database, $rowId, 4, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -101,10 +98,8 @@ $actionGroups = [
         'moveother' => [
             'icon' => 'nut',
             'title' => 'Move This Stream to Other Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
                 return KPTV::moveToType( $database, $rowId, 99, 'toother' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
@@ -113,15 +108,16 @@ $actionGroups = [
         ],
     ],
     'vod' => [
-        ['html' => '<br class="action-nl" />',], 
+        'html' => [
+            'location' => 'both',
+            'content' => '<br class="action-nl" />'
+        ],
         'movelive' => [
             'icon' => 'tv',
             'title' => 'Move This Stream to Live Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
-                KPTV::moveToType( $database, $rowId, 0, 'liveorseries' );
+                return KPTV::moveToType( $database, $rowId, 0, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -130,23 +126,8 @@ $actionGroups = [
         'moveseries' => [
             'icon' => 'album',
             'title' => 'Move This Stream to Series Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
-                return KPTV::moveToType( $database, $rowId, 5, 'liveorseries' );
-            },
-            'confirm' => 'Are you sure you want to move this stream?',
-            'success_message' => 'The stream has been moved.',
-            'error_message' => 'Failed to move the stream.'
-        ],
-        'movevod' => [
-            'icon' => 'video-camera',
-            'title' => 'Move This Stream to VOD Streams',
-            'class' => ' uk-margin-tiny-full',
-            'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
                 return KPTV::moveToType( $database, $rowId, 5, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
@@ -156,10 +137,8 @@ $actionGroups = [
         'moveother' => [
             'icon' => 'nut',
             'title' => 'Move This Stream to Other Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
                 return KPTV::moveToType( $database, $rowId, 99, 'toother' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
@@ -168,15 +147,16 @@ $actionGroups = [
         ],
     ],
     'other' => [
-        ['html' => '<br class="action-nl" />',], 
+        'html' => [
+            'location' => 'both',
+            'content' => '<br class="action-nl" />'
+        ],
         'movelive' => [
             'icon' => 'tv',
             'title' => 'Move This Stream to Live Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
-                KPTV::moveToType( $database, $rowId, 0, 'liveorseries' );
+                return KPTV::moveToType( $database, $rowId, 0, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -185,10 +165,8 @@ $actionGroups = [
         'moveseries' => [
             'icon' => 'album',
             'title' => 'Move This Stream to Series Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
                 return KPTV::moveToType( $database, $rowId, 5, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
@@ -198,11 +176,9 @@ $actionGroups = [
         'movevod' => [
             'icon' => 'video-camera',
             'title' => 'Move This Stream to VOD Streams',
-            'class' => ' uk-margin-tiny-full',
+            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-
-                // move the stream
-                return KPTV::moveToType( $database, $rowId, 5, 'liveorseries' );
+                return KPTV::moveToType( $database, $rowId, 4, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
