@@ -5,7 +5,7 @@
  * @param DataTables $dt The datatable class
  */
 
-defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
+defined( 'KPT_PATH' ) || die( 'Direct Access is not allowed!' );
 
 ?>
 <div class="uk-width-1-1">
@@ -13,7 +13,7 @@ defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
         <div class="uk-width-1-1 uk-width-1-2@s uk-grid-collapse uk-flex-center uk-flex-left@s" uk-grid>
             <?php echo $dt -> renderSearchFormComponent( ); ?>
         </div>
-        <div class="uk-width-1-1 uk-width-1-2@s uk-flex uk-flex-right@s uk-flex-center uk-flex-left@s uk-padding-tiny-top bulk-action-bar">
+        <div class="uk-width-1-1 uk-width-1-2@s uk-flex uk-flex-right@s uk-flex-center uk-flex-left@s uk-padding-tiny-top">
             <?php if( in_array( $dt -> getBaseTableName( ), ['kptv_stream_other', 'kptv_stream_missing'] ) ) { ?>
                 <style>[uk-icon="plus"]{display:none !important;}</style>
             <?php } ?>

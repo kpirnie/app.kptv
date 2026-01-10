@@ -7,13 +7,14 @@
  * @package KP Library
  */
 
-defined('KPTV_PATH') || die('Direct Access is not allowed!');
+defined('KPT_PATH') || die('Direct Access is not allowed!');
 
 // make sure we've got our namespaces...
+use KPT\KPT;
 use KPT\DataTables\DataTables;
 
 // setup the user id
-$userId = KPTV_User::get_current_user( ) -> id;
+$userId = KPT_User::get_current_user( ) -> id;
 
 // Configure database via constructor
 $dbconf = [
@@ -138,7 +139,7 @@ $dt -> table( 'kptv_stream_missing m' )
         [
             'deletemissing' => [
                 'icon' => 'trash',
-                'title' => 'Delete the Stream (also deletes the master)',
+                'title' => 'Delete the Stream<br />(also deletes the master)',
                 'confirm' => 'Are you want to remove this stream?',
                 'callback' => function( $rowId, $rowData, $db, $tableName ) {
                     // make sure we have a row ID
@@ -162,7 +163,7 @@ $dt -> table( 'kptv_stream_missing m' )
             ],
             'clearmissing' => [
                 'icon' => 'ban',
-                'title' => 'Clear the Stream (only deletes it from here)',
+                'title' => 'Clear the Stream<br />(only deletes it from here)',
                 'confirm' => 'Are you want to remove this stream?',
                 'callback' => function( $rowId, $rowData, $db, $tableName ) {
                     // make sure we have a row ID
@@ -186,35 +187,37 @@ if ( isset( $_POST['action'] ) || isset( $_GET['action'] ) ) {
 }
 
 // pull in the header
-KPTV::pull_header( );
+KPT::pull_header( );
 ?>
-<h2 class="kptv-heading uk-heading-bullet">Missing Streams</h2>
-<p class="uk-text-meta uk-margin-remove-top">These streams exist in your database, but not at any of your providers.</p>
-<div class="uk-border-bottom">
-    <?php
+<div class="uk-container uk-container-full">
+    <h2 class="me uk-heading-divider uk-margin-remove-bottom">Missing Streams</h2>
+    <p class="uk-text-meta uk-margin-remove-top">These streams exist in your database, but not at any of your providers.</p>
+    <div class="uk-border-bottom">
+        <?php
 
-    // pull in the control panel
-    KPTV::include_view( 'common/control-panel', [ 'dt' => $dt ] );
-    ?>
-</div>
-<div class="uk-margin">
-    <?php
+        // pull in the control panel
+        KPT::include_view( 'common/control-panel', [ 'dt' => $dt ] );
+        ?>
+    </div>
+    <div class="">
+        <?php
 
-    // write out the datatable component
-    echo $dt -> renderDataTableComponent( );
-    ?>
-</div>
-<div class="uk-border-top">
-    <?php
+        // write out the datatable component
+        echo $dt -> renderDataTableComponent( );
+        ?>
+    </div>
+    <div class="uk-border-top">
+        <?php
 
-    // pull in the control panel
-    KPTV::include_view( 'common/control-panel', [ 'dt' => $dt ] );
-    ?>
+        // pull in the control panel
+        KPT::include_view( 'common/control-panel', [ 'dt' => $dt ] );
+        ?>
+    </div>
 </div>
 <?php
 
 // pull in the footer
-KPTV::pull_footer( );
+KPT::pull_footer( );
 
 // clean up
 unset( $dt, $formFields, $actionGroups, $bulkActions, $dbconf );

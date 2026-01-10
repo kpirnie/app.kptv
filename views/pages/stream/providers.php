@@ -7,16 +7,17 @@
  * @package KP Library
  */
 
-defined('KPTV_PATH') || die('Direct Access is not allowed!');
+defined('KPT_PATH') || die('Direct Access is not allowed!');
 
 // make sure we've got our namespaces...
+use KPT\KPT;
 use KPT\DataTables\DataTables;
 
 // setup the user id
-$userId = KPTV_User::get_current_user( ) -> id;
+$userId = KPT_User::get_current_user( ) -> id;
 
 // setup the user string
-$userForExport = KPTV::encrypt( $userId );
+$userForExport = KPT::encrypt( $userId );
 
 // Configure database via constructor
 $dbconf = [
@@ -32,84 +33,10 @@ $dbconf = [
 $dt = new DataTables( $dbconf );
 
 // setup the form fields
-$formFields = [
-    'u_id' => [
-        'type' => 'hidden',
-        'value' => $userId,
-        'required' => true
-    ],
-    'sp_name' => [
-        'type' => 'text',
-        'required' => true,
-        'label' => 'Name',
-        'class' => 'uk-width-1-1',
-    ],
-    'sp_type' => [
-        'type' => 'select',
-        'required' => true,
-        'class' => 'uk-width-1-2 uk-margin-bottom',
-        'label' => 'Type',
-        'options' => [
-            0 => 'XC API',
-            1 => 'M3U',
-        ],
-    ],
-    'sp_cnx_limit' => [
-        'type' => 'text',
-        'required' => true,
-        'class' => 'uk-width-1-2 uk-margin-bottom',
-        'label' => 'Connections',
-        'default' => 1,
-    ],
-    'sp_domain' => [
-        'type' => 'url',
-        'required' => true,
-        'label' => 'Domain / URL',
-        'class' => 'uk-width-1-1',
-    ],
-    'sp_username' => [
-        'type' => 'text',
-        'required' => false,
-        'class' => 'uk-width-1-2 uk-margin-bottom',
-        'label' => 'XC Username',
-    ],
-    'sp_password' => [
-        'type' => 'text',
-        'required' => false,
-        'class' => 'uk-width-1-2 uk-margin-bottom',
-        'label' => 'XC Password',
-    ],
-    'sp_stream_type' => [
-        'type' => 'select',
-        'required' => false,
-        'class' => 'uk-width-1-2 uk-margin-bottom',
-        'label' => 'Stream Type',
-        'options' => [
-            0 => 'MPEGTS',
-            1 => 'HLS',
-        ],
-    ],
-    'sp_should_filter' => [
-        'label' => 'Should Filter?',
-        'type' => 'boolean',
-        'required' => true,
-        'class' => 'uk-width-1-2 uk-margin-bottom',
-    ],
-    'sp_priority' => [
-        'type' => 'number',
-        'required' => false,
-        'class' => 'uk-width-1-2 uk-margin-bottom',
-        'label' => 'Order Priority',
-        'default' => 1,
-    ],
-    'sp_refresh_period' => [
-        'type' => 'number',
-        'required' => false,
-        'class' => 'uk-width-1-2 uk-margin-bottom',
-        'label' => 'Refresh Period',
-        'default' => 1,
-    ],
-];
+$formFields = KPT::view_configs( 'providers' ) -> form;
+
+// setup the row actions
+$rowActions = KPT::view_configs( 'providers', userForExport: $userForExport ) -> row;
 
 // configure the datatable
 $dt -> table( 'kptv_stream_providers' )
@@ -146,83 +73,8 @@ $dt -> table( 'kptv_stream_providers' )
     -> addForm( 'Add a Provider', $formFields, class: 'uk-grid-small uk-grid' )
     -> editForm( 'Update a Provider', $formFields, class: 'uk-grid-small uk-grid' )
     -> actionGroups( [
-        [
-            /*[
-                'html' => [
-                    'position' => 'after', // before, after, both
-                    'content' => '<strong>XC:</strong> ',
-                ],
-            ],*/
-            'exportlivexc' => [
-                'icon' => 'link-external',
-                'title' => 'Copy Domain',
-                'class' => 'copy-link uk-margin-tiny-full',
-                'href' => KPTV_URI . 'xc',
-            ],
-
-            'exportseriesxc' => [
-                'icon' => 'users', 
-                'title' => 'Copy Username',
-                'class' => 'copy-link uk-margin-tiny-full',
-                'href' => '{id}',
-            ],
-            'exportvodxc' => [
-                'icon' => 'server', 
-                'title' => 'Copy Password',
-                'class' => 'copy-link uk-margin-tiny-full',
-                'href' => $userForExport,
-            ],
-        ],
-        [
-            //[
-            //    'html' => '<br class="action-nl" /><strong>M3U:</strong> ',
-            //],
-            ['html' => '<br class="action-nl" />',],            
-            'exportlive' => [
-                'icon' => 'tv',
-                'title' => 'Export Live M3U',
-                'class' => 'copy-link uk-margin-tiny-full',
-                'href' => '' . KPTV_URI . 'playlist/' . $userForExport . '/{id}/live',
-            ],
-            'exportseries' => [
-                'icon' => 'album', 
-                'title' => 'Export Series M3U',
-                'class' => 'copy-link uk-margin-tiny-full',
-                'href' => '' . KPTV_URI . 'playlist/' . $userForExport . '/{id}/series',
-            ],
-            'exportvod' => [
-                'icon' => 'video-camera', 
-                'title' => 'Export VOD M3U',
-                'class' => 'copy-link uk-margin-tiny-full',
-                'href' => '' . KPTV_URI . 'playlist/' . $userForExport . '/{id}/vod',
-            ],            
-        ],
-        [
-            ['html' => '<br class="action-nl" />',],            
-            'delprovider' => [
-                'icon' => 'trash',
-                'title' => 'Delete this Provider',
-                'class' => ' uk-margin-tiny-full',
-                'success_message' => 'Provider and all it\'s streams have been deleted.',
-                'error_message' => 'Failed to delete the provider.',
-                'confirm' => 'Are you want to remove this provider and all it\'s streams?',
-                'callback' => function( $rowId, $rowData, $db, $tableName ) {
-                    
-                    // make sure we have a row ID
-                    if ( empty( $rowId ) ) return false;
-
-                    // Delete all streams for the provider first
-                    $db -> query( "DELETE FROM `kptv_streams` WHERE `p_id` = ?" )
-                        -> bind( $rowId )
-                        -> execute( );
-                    // now delete the provider
-                    return $db -> query( "DELETE FROM {$tableName} WHERE id = ?" )
-                        -> bind( $rowId )
-                        -> execute( ) !== false;
-                },
-            ],
-        ],
-        ['edit'],
+        $rowActions,
+        [ 'edit' ],
     ] );
 
 // Handle AJAX requests (before any HTML output)
@@ -231,34 +83,36 @@ if ( isset( $_POST['action'] ) || isset( $_GET['action'] ) ) {
 }
 
 // pull in the header
-KPTV::pull_header( );
+KPT::pull_header( );
 ?>
-<h2 class="kptv-heading uk-heading-bullet">Stream Providers</h2>
-<div class="uk-border-bottom">
-    <?php
+<div class="uk-container uk-container-full">
+    <h2 class="me uk-heading-divider">Stream Providers</h2>
+    <div class="uk-border-bottom">
+        <?php
 
-    // pull in the control panel
-    KPTV::include_view( 'common/control-panel', [ 'dt' => $dt ] );
-    ?>
-</div>
-<div class="uk-margin">
-    <?php
+        // pull in the control panel
+        KPT::include_view( 'common/control-panel', [ 'dt' => $dt ] );
+        ?>
+    </div>
+    <div class="">
+        <?php
 
-    // write out the datatable component
-    echo $dt -> renderDataTableComponent( );
-    ?>
-</div>
-<div class="uk-border-top">
-    <?php
+        // write out the datatable component
+        echo $dt -> renderDataTableComponent( );
+        ?>
+    </div>
+    <div class="uk-border-top">
+        <?php
 
-    // pull in the control panel
-    KPTV::include_view( 'common/control-panel', [ 'dt' => $dt ] );
-    ?>
+        // pull in the control panel
+        KPT::include_view( 'common/control-panel', [ 'dt' => $dt ] );
+        ?>
+    </div>
 </div>
 <?php
 
 // pull in the footer
-KPTV::pull_footer( );
+KPT::pull_footer( );
 
 // clean up
-unset( $dt, $formFields, $dbconf );
+unset( $dt, $formFields, $rowActions, $dbconf );

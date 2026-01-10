@@ -11,17 +11,19 @@
  */
 
 // define the primary app path if not already defined
-defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
+defined( 'KPT_PATH' ) || die( 'Direct Access is not allowed!' );
+
+use KPT\KPT;
 
 // pull in the header
-KPTV::pull_header( );
+KPT::pull_header( );
 
 ?>
 <div class="uk-container">
-    <h2 class="kptv-heading uk-heading-bullet">Stream Management FAQ</h2>
+    <h2 class="me uk-heading-divider">Stream Management FAQ</h2>
 
     <!-- Stream Basics Section -->
-    <div class="uk-margin">
+    <div class="uk-margin-large">
         <h3 class="uk-heading-bullet">Stream Basics</h3>
         
         <ul uk-accordion="multiple: false">
@@ -66,7 +68,7 @@ KPTV::pull_header( );
     </div>
 
     <!-- Provider Management Section -->
-    <div class="uk-margin">
+    <div class="uk-margin-large">
         <h3 class="uk-heading-bullet">Provider Management</h3>
         
         <ul uk-accordion="multiple: false">
@@ -123,7 +125,7 @@ KPTV::pull_header( );
     </div>
 
     <!-- IPTV App Setup Section -->
-    <div class="uk-margin">
+    <div class="uk-margin-large">
         <h3 class="uk-heading-bullet">IPTV App Setup (Xtream Codes)</h3>
         
         <ul uk-accordion="multiple: false">
@@ -150,7 +152,7 @@ KPTV::pull_header( );
                             <tbody>
                                 <tr>
                                     <td><strong>Server URL / Host</strong></td>
-                                    <td>The Domain shown on the providers page (e.g., <code><?php echo rtrim(KPTV_URI, '/'); ?>/xc</code>)</td>
+                                    <td>The Domain shown on the providers page (e.g., <code><?php echo rtrim(KPT_URI, '/'); ?>/xc</code>)</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Username</strong></td>
@@ -234,7 +236,7 @@ KPTV::pull_header( );
                         <li><strong>No streams showing:</strong> Make sure you have active streams for that provider. Check that streams are marked as "Active".</li>
                         <li><strong>Streams buffering/not playing:</strong> This is usually a provider issue, not KPTV. Test the stream directly using the play button in the web interface.</li>
                         <li><strong>Categories empty:</strong> Streams need a TVG Group assigned to appear in categories.</li>
-                        <li><strong>"Invalid login" or similar:</strong> Verify the Domain includes <code>/xc</code> at the end (e.g., <code><?php echo rtrim(KPTV_URI, '/'); ?>/xc</code>).</li>
+                        <li><strong>"Invalid login" or similar:</strong> Verify the Domain includes <code>/xc</code> at the end (e.g., <code><?php echo rtrim(KPT_URI, '/'); ?>/xc</code>).</li>
                     </ul>
                     <div class="uk-alert-primary dark-version" uk-alert>
                         <p><strong>Testing tip:</strong> Try the M3U export first to verify your streams work, then troubleshoot the XC connection.</p>
@@ -245,7 +247,7 @@ KPTV::pull_header( );
     </div>
 
     <!-- Content Filtering Section -->
-    <div class="uk-margin">
+    <div class="uk-margin-large">
         <h3 class="uk-heading-bullet">Content Filtering</h3>
         
         <ul uk-accordion="multiple: false">
@@ -294,7 +296,7 @@ KPTV::pull_header( );
     </div>
 
     <!-- Stream Organization Section -->
-    <div class="uk-margin">
+    <div class="uk-margin-large">
         <h3 class="uk-heading-bullet">Stream Organization</h3>
         
         <ul uk-accordion="multiple: false">
@@ -350,7 +352,7 @@ KPTV::pull_header( );
     </div>
 
     <!-- Playlist Export Section -->
-    <div class="uk-margin">
+    <div class="uk-margin-large">
         <h3 class="uk-heading-bullet">Playlist Export</h3>
         
         <ul uk-accordion="multiple: false">
@@ -410,7 +412,7 @@ KPTV::pull_header( );
     </div>
 
     <!-- Troubleshooting Section -->
-    <div class="uk-margin">
+    <div class="uk-margin-large">
         <h3 class="uk-heading-bullet">Troubleshooting</h3>
         
         <ul uk-accordion="multiple: false">
@@ -468,4 +470,4 @@ KPTV::pull_header( );
 
 <?php
 // pull in the footer
-KPTV::pull_footer( );
+KPT::pull_footer( );

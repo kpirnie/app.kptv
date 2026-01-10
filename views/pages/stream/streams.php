@@ -7,9 +7,10 @@
  * @package KP Library
  */
 
-defined('KPTV_PATH') || die('Direct Access is not allowed!');
+defined('KPT_PATH') || die('Direct Access is not allowed!');
 
 // make sure we've got our namespaces...
+use KPT\KPT;
 use KPT\DataTables\DataTables;
 
 // Handle stream type filter (passed from router)
@@ -24,21 +25,18 @@ $valid_active = ['active' => 1, 'inactive' => 0];
 $active_value = $valid_active[$active_filter] ?? null;
 
 // setup the user id
-$userId = KPTV_User::get_current_user( ) -> id;
+$userId = KPT_User::get_current_user( ) -> id;
 
 // setup the actions
 $actionGroups = [
     'live' => [
-        'html' => [
-            'location' => 'both',
-            'content' => '<br class="action-nl" />'
-        ],
         'moveseries' => [
             'icon' => 'album',
             'title' => 'Move This Stream to Series Streams',
-            'class' => 'uk-margin-tiny-full move-to-series single-move',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 5, 'liveorseries' );
+
+                // move the stream
+                return KPT::moveToType( $database, $rowId, 5, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -47,9 +45,10 @@ $actionGroups = [
         'movevod' => [
             'icon' => 'video-camera',
             'title' => 'Move This Stream to VOD Streams',
-            'class' => 'uk-margin-tiny-full move-to-vod single-move',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 4, 'liveorseries' );
+
+                // move the stream
+                return KPT::moveToType( $database, $rowId, 5, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -58,9 +57,10 @@ $actionGroups = [
         'moveother' => [
             'icon' => 'nut',
             'title' => 'Move This Stream to Other Streams',
-            'class' => 'uk-margin-tiny-full move-to-other single-move',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 99, 'toother' );
+
+                // move the stream
+                return KPT::moveToType( $database, $rowId, 99, 'toother' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -68,16 +68,13 @@ $actionGroups = [
         ],
     ],
     'series' => [
-        'html' => [
-            'location' => 'both',
-            'content' => '<br class="action-nl" />'
-        ],
         'movelive' => [
             'icon' => 'tv',
             'title' => 'Move This Stream to Live Streams',
-            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 0, 'liveorseries' );
+
+                // move the stream
+                KPT::moveToType( $database, $rowId, 0, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -86,9 +83,10 @@ $actionGroups = [
         'movevod' => [
             'icon' => 'video-camera',
             'title' => 'Move This Stream to VOD Streams',
-            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 4, 'liveorseries' );
+
+                // move the stream
+                return KPT::moveToType( $database, $rowId, 5, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -97,9 +95,10 @@ $actionGroups = [
         'moveother' => [
             'icon' => 'nut',
             'title' => 'Move This Stream to Other Streams',
-            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 99, 'toother' );
+
+                // move the stream
+                return KPT::moveToType( $database, $rowId, 99, 'toother' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -107,16 +106,13 @@ $actionGroups = [
         ],
     ],
     'vod' => [
-        'html' => [
-            'location' => 'both',
-            'content' => '<br class="action-nl" />'
-        ],
         'movelive' => [
             'icon' => 'tv',
             'title' => 'Move This Stream to Live Streams',
-            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 0, 'liveorseries' );
+
+                // move the stream
+                KPT::moveToType( $database, $rowId, 0, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -125,48 +121,10 @@ $actionGroups = [
         'moveseries' => [
             'icon' => 'album',
             'title' => 'Move This Stream to Series Streams',
-            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 5, 'liveorseries' );
-            },
-            'confirm' => 'Are you sure you want to move this stream?',
-            'success_message' => 'The stream has been moved.',
-            'error_message' => 'Failed to move the stream.'
-        ],
-        'moveother' => [
-            'icon' => 'nut',
-            'title' => 'Move This Stream to Other Streams',
-            'class' => 'uk-margin-tiny-full',
-            'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 99, 'toother' );
-            },
-            'confirm' => 'Are you sure you want to move this stream?',
-            'success_message' => 'The stream has been moved.',
-            'error_message' => 'Failed to move the stream.'
-        ],
-    ],
-    'other' => [
-        'html' => [
-            'location' => 'both',
-            'content' => '<br class="action-nl" />'
-        ],
-        'movelive' => [
-            'icon' => 'tv',
-            'title' => 'Move This Stream to Live Streams',
-            'class' => 'uk-margin-tiny-full',
-            'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 0, 'liveorseries' );
-            },
-            'confirm' => 'Are you sure you want to move this stream?',
-            'success_message' => 'The stream has been moved.',
-            'error_message' => 'Failed to move the stream.'
-        ],
-        'moveseries' => [
-            'icon' => 'album',
-            'title' => 'Move This Stream to Series Streams',
-            'class' => 'uk-margin-tiny-full',
-            'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 5, 'liveorseries' );
+
+                // move the stream
+                return KPT::moveToType( $database, $rowId, 5, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -175,9 +133,60 @@ $actionGroups = [
         'movevod' => [
             'icon' => 'video-camera',
             'title' => 'Move This Stream to VOD Streams',
-            'class' => 'uk-margin-tiny-full',
             'callback' => function($rowId, $rowData, $database, $tableName) {
-                return KPTV::moveToType( $database, $rowId, 4, 'liveorseries' );
+
+                // move the stream
+                return KPT::moveToType( $database, $rowId, 5, 'liveorseries' );
+            },
+            'confirm' => 'Are you sure you want to move this stream?',
+            'success_message' => 'The stream has been moved.',
+            'error_message' => 'Failed to move the stream.'
+        ],
+        'moveother' => [
+            'icon' => 'nut',
+            'title' => 'Move This Stream to Other Streams',
+            'callback' => function($rowId, $rowData, $database, $tableName) {
+
+                // move the stream
+                return KPT::moveToType( $database, $rowId, 99, 'toother' );
+            },
+            'confirm' => 'Are you sure you want to move this stream?',
+            'success_message' => 'The stream has been moved.',
+            'error_message' => 'Failed to move the stream.'
+        ],
+    ],
+    'other' => [
+        'movelive' => [
+            'icon' => 'tv',
+            'title' => 'Move This Stream to Live Streams',
+            'callback' => function($rowId, $rowData, $database, $tableName) {
+
+                // move the stream
+                KPT::moveToType( $database, $rowId, 0, 'liveorseries' );
+            },
+            'confirm' => 'Are you sure you want to move this stream?',
+            'success_message' => 'The stream has been moved.',
+            'error_message' => 'Failed to move the stream.'
+        ],
+        'moveseries' => [
+            'icon' => 'album',
+            'title' => 'Move This Stream to Series Streams',
+            'callback' => function($rowId, $rowData, $database, $tableName) {
+
+                // move the stream
+                return KPT::moveToType( $database, $rowId, 5, 'liveorseries' );
+            },
+            'confirm' => 'Are you sure you want to move this stream?',
+            'success_message' => 'The stream has been moved.',
+            'error_message' => 'Failed to move the stream.'
+        ],
+        'movevod' => [
+            'icon' => 'video-camera',
+            'title' => 'Move This Stream to VOD Streams',
+            'callback' => function($rowId, $rowData, $database, $tableName) {
+
+                // move the stream
+                return KPT::moveToType( $database, $rowId, 5, 'liveorseries' );
             },
             'confirm' => 'Are you sure you want to move this stream?',
             'success_message' => 'The stream has been moved.',
@@ -192,7 +201,6 @@ $bulkActions = [
         'livestreamact' => [
             'label' => '(De)Activate Streams',
             'icon' => 'crosshairs',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Are you sure you want to (de)activate these streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -215,7 +223,6 @@ $bulkActions = [
         'movetoseries' => [
             'label' => 'Move to Series Streams',
             'icon' => 'album',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to series streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -231,7 +238,7 @@ $bulkActions = [
                 try {
                     // Process all selected IDs
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 5, 'liveorseries' );
+                        $result = KPT::moveToType( $database, $id, 5, 'liveorseries' );
                         if ($result) {
                             $successCount++;
                         }
@@ -257,7 +264,6 @@ $bulkActions = [
         'movetovod' => [
             'label' => 'Move to VOD Streams',
             'icon' => 'video-camera',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to vod streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -273,7 +279,7 @@ $bulkActions = [
                 try {
                     // Process all selected IDs
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 5, 'liveorseries' );
+                        $result = KPT::moveToType( $database, $id, 5, 'liveorseries' );
                         if ($result) {
                             $successCount++;
                         }
@@ -299,7 +305,6 @@ $bulkActions = [
         'movetoother' => [
             'label' => 'Move to Other Streams',
             'icon' => 'nut',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to other streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
                 // make sure we have selected items
@@ -311,7 +316,7 @@ $bulkActions = [
                 
                 try {
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 99, 'toother' );
+                        $result = KPT::moveToType( $database, $id, 99, 'toother' );
                         if ($result) {
                             $successCount++;
                         }
@@ -338,7 +343,6 @@ $bulkActions = [
         'seriesstreamact' => [
             'label' => '(De)Activate Streams',
             'icon' => 'crosshairs',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Are you sure you want to (de)activate these streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -361,7 +365,6 @@ $bulkActions = [
         'movetolive' => [
             'label' => 'Move to Live Streams',
             'icon' => 'tv',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to live streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -375,7 +378,7 @@ $bulkActions = [
                 
                 try {
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 0, 'liveorseries' );
+                        $result = KPT::moveToType( $database, $id, 0, 'liveorseries' );
                         if ($result) {
                             $successCount++;
                         }
@@ -400,7 +403,6 @@ $bulkActions = [
         'movetovod' => [
             'label' => 'Move to VOD Streams',
             'icon' => 'video-camera',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to vod streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -416,7 +418,7 @@ $bulkActions = [
                 try {
                     // Process all selected IDs
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 5, 'liveorseries' );
+                        $result = KPT::moveToType( $database, $id, 5, 'liveorseries' );
                         if ($result) {
                             $successCount++;
                         }
@@ -442,7 +444,6 @@ $bulkActions = [
         'movetoother' => [
             'label' => 'Move to Other Streams',
             'icon' => 'nut',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to other streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
                 // make sure we have selected items
@@ -454,7 +455,7 @@ $bulkActions = [
                 
                 try {
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 99, 'toother' );
+                        $result = KPT::moveToType( $database, $id, 99, 'toother' );
                         if ($result) {
                             $successCount++;
                         }
@@ -481,7 +482,6 @@ $bulkActions = [
         'movetolive' => [
             'label' => 'Move to Live Streams',
             'icon' => 'tv',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to live streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -495,7 +495,7 @@ $bulkActions = [
                 
                 try {
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 0, 'liveorseries' );
+                        $result = KPT::moveToType( $database, $id, 0, 'liveorseries' );
                         if ($result) {
                             $successCount++;
                         }
@@ -520,7 +520,6 @@ $bulkActions = [
         'movetoseries' => [
             'label' => 'Move to Series Streams',
             'icon' => 'album',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to series streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -536,7 +535,7 @@ $bulkActions = [
                 try {
                     // Process all selected IDs
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 5, 'liveorseries' );
+                        $result = KPT::moveToType( $database, $id, 5, 'liveorseries' );
                         if ($result) {
                             $successCount++;
                         }
@@ -562,7 +561,6 @@ $bulkActions = [
         'movetovod' => [
             'label' => 'Move to VOD Streams',
             'icon' => 'video-camera',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to vod streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -578,7 +576,7 @@ $bulkActions = [
                 try {
                     // Process all selected IDs
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 5, 'liveorseries' );
+                        $result = KPT::moveToType( $database, $id, 5, 'liveorseries' );
                         if ($result) {
                             $successCount++;
                         }
@@ -604,7 +602,6 @@ $bulkActions = [
         'movetoother' => [
             'label' => 'Move to Other Streams',
             'icon' => 'nut',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to other streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
                 // make sure we have selected items
@@ -616,7 +613,7 @@ $bulkActions = [
                 
                 try {
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 99, 'toother' );
+                        $result = KPT::moveToType( $database, $id, 99, 'toother' );
                         if ($result) {
                             $successCount++;
                         }
@@ -643,7 +640,6 @@ $bulkActions = [
         'movetolive' => [
             'label' => 'Move to Live Streams',
             'icon' => 'tv',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to live streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -657,7 +653,7 @@ $bulkActions = [
                 
                 try {
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 0, 'liveorseries' );
+                        $result = KPT::moveToType( $database, $id, 0, 'liveorseries' );
                         if ($result) {
                             $successCount++;
                         }
@@ -682,7 +678,6 @@ $bulkActions = [
         'movetoseries' => [
             'label' => 'Move to Series Streams',
             'icon' => 'album',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to series streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -698,7 +693,7 @@ $bulkActions = [
                 try {
                     // Process all selected IDs
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 5, 'liveorseries' );
+                        $result = KPT::moveToType( $database, $id, 5, 'liveorseries' );
                         if ($result) {
                             $successCount++;
                         }
@@ -724,7 +719,6 @@ $bulkActions = [
         'movetovod' => [
             'label' => 'Move to VOD Streams',
             'icon' => 'video-camera',
-            'class' => ' uk-margin-tiny-full',
             'confirm' => 'Move the selected records to vod streams?',
             'callback' => function( $selectedIds, $database, $tableName ) {
 
@@ -740,7 +734,7 @@ $bulkActions = [
                 try {
                     // Process all selected IDs
                     foreach($selectedIds as $id) {
-                        $result = KPTV::moveToType( $database, $id, 5, 'liveorseries' );
+                        $result = KPT::moveToType( $database, $id, 5, 'liveorseries' );
                         if ($result) {
                             $successCount++;
                         }
@@ -796,7 +790,7 @@ $formFields = [
         'required' => true,
         'class' => 'uk-width-1-1 uk-margin-bottom',
         'label' => 'Provider',
-        'options' => KPTV::getProviders( $userId ),
+        'options' => KPT::getProviders( $userId ),
     ], 
     's_active' => [
         'type' => 'boolean',
@@ -809,7 +803,7 @@ $formFields = [
         'options' => [
             0 => 'Live',
             5 => 'Series',
-            4 => 'VOD',
+            //4 => 'VOD',
         ],
         'class' => 'uk-width-1-2',
     ],
@@ -888,7 +882,6 @@ $dt -> table( 'kptv_streams s' )
     ] )
     -> columnClasses( [
         's.id' => 'hide-col',
-        's_channel' => 'uk-min-width',
         's_tvg_id' => 'txt-truncate',
         'p.sp_name' => 'txt-truncate',
     ] )
@@ -905,7 +898,7 @@ $dt -> table( 'kptv_streams s' )
             'playstream' => [
                 'icon' => 'play',
                 'title' => 'Try to Play Stream',
-                'class' => 'play-stream uk-margin-tiny-full',
+                'class' => 'play-stream',
                 'href' => '#{s_orig_name}',
                 'attributes' => [
                     'data-stream-url' => '{s_stream_uri}',
@@ -915,7 +908,7 @@ $dt -> table( 'kptv_streams s' )
             'copystream' => [
                 'icon' => 'link', 
                 'title' => 'Copy Stream Link',
-                'class' => 'copy-link uk-margin-tiny-full',
+                'class' => 'copy-link',
                 'href' => '{s_stream_uri}',
             ]
         ],
@@ -929,34 +922,36 @@ if ( isset( $_POST['action'] ) || isset( $_GET['action'] ) ) {
 }
 
 // pull in the header
-KPTV::pull_header( );
+KPT::pull_header( );
 ?>
-<h2 class="kptv-heading uk-heading-bullet"><?php echo ( isset($type) ) ? ucfirst( $type ) : ''; ?> <?php echo ucfirst( $which ); ?> Streams</h2>
-<div class="">
-    <?php
+<div class="uk-container uk-container-full">
+    <h2 class="me uk-heading-divider"><?php echo ucfirst( $type ); ?> <?php echo ucfirst( $which ); ?> Streams</h2>
+    <div class="">
+        <?php
 
-    // pull in the control panel
-    KPTV::include_view( 'common/control-panel', [ 'dt' => $dt ] );
-    ?>
-</div>
-<div class="uk-margin the-datatable">
-    <?php
+        // pull in the control panel
+        KPT::include_view( 'common/control-panel', [ 'dt' => $dt ] );
+        ?>
+    </div>
+    <div class="">
+        <?php
 
-    // write out the datatable component
-    echo $dt -> renderDataTableComponent( );
-    ?>
-</div>
-<div class="">
-    <?php
+        // write out the datatable component
+        echo $dt -> renderDataTableComponent( );
+        ?>
+    </div>
+    <div class="">
+        <?php
 
-    // pull in the control panel
-    KPTV::include_view( 'common/control-panel', [ 'dt' => $dt ] );
-    ?>
+        // pull in the control panel
+        KPT::include_view( 'common/control-panel', [ 'dt' => $dt ] );
+        ?>
+    </div>
 </div>
 <?php
 
 // pull in the footer
-KPTV::pull_footer( );
+KPT::pull_footer( );
 
 // clean up
 unset( $dt, $formFields, $actionGroups, $bulkActions, $dbconf );

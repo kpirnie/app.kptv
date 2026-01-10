@@ -12,7 +12,8 @@ use Kptv\IptvSync\Parsers\ProviderFactory;
 class MissingChecker
 {
     public function __construct(
-        private readonly KpDb $db
+        private readonly KpDb $db,
+        private readonly bool $checkAll = false
     ) {
     }
 
@@ -28,15 +29,22 @@ class MissingChecker
         // Create lookup set
         $providerUris = array_flip(array_column($providerStreams, 's_stream_uri'));
 
+        // Build where clauses
+        $where = [
+            new WhereClause('u_id', $userId, ComparisonOperator::EQ),
+            new WhereClause('p_id', $providerId, ComparisonOperator::EQ)
+        ];
+
+        // Only filter by active if not checking all
+        if (!$this->checkAll) {
+            $where[] = new WhereClause('s_active', 1, ComparisonOperator::EQ);
+        }
+
         // Get streams from database
         $dbStreams = $this->db->get_all(
             table: 'streams',
             columns: ['id', 's_stream_uri', 's_orig_name'],
-            where: [
-                new WhereClause('u_id', $userId, ComparisonOperator::EQ),
-                new WhereClause('p_id', $providerId, ComparisonOperator::EQ),
-                new WhereClause('s_active', 1, ComparisonOperator::EQ)
-            ]
+            where: $where
         );
 
         if (empty($dbStreams)) {

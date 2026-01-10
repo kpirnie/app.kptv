@@ -12,29 +12,12 @@ use Kptv\IptvSync\Parsers\ProviderFactory;
 class SyncEngine
 {
     private FilterManager $filterManager;
-    private array $ignoreFields;
-    private array $fieldMapping = [
-        'tvg_id' => 's_tvg_id',
-        'logo' => 's_tvg_logo',
-        'tvg_group' => 's_tvg_group'
-    ];
 
     public function __construct(
         private readonly KpDb $db,
         array $ignoreFields = []
     ) {
         $this->filterManager = new FilterManager($db);
-        $this->ignoreFields = $ignoreFields;
-    }
-
-    private function shouldSyncField(string $fieldName): bool
-    {
-        foreach ($this->ignoreFields as $ignoreField) {
-            if ($fieldName === ($this->fieldMapping[$ignoreField] ?? null)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public function syncProvider(array $provider): int
@@ -133,19 +116,20 @@ class SyncEngine
     {
         $existingStreams = $this->db->get_all(
             table: 'streams',
-            columns: ['id', 's_orig_name', 's_stream_uri', 's_tvg_id', 's_tvg_group', 's_tvg_logo', 's_extras'],
+            columns: ['id', 's_orig_name', 's_stream_uri'],
             where: [
                 new WhereClause('u_id', $userId, ComparisonOperator::EQ),
                 new WhereClause('p_id', $providerId, ComparisonOperator::EQ)
             ]
         );
 
-        // Match by name + normalized uri
-        $existingLookup = [];
+        // Build lookups by name and by uri separately
+        $existingByName = [];
+        $existingByUri = [];
         foreach ($existingStreams ?? [] as $s) {
-            $normalizedUri = $this->normalizeUri($s['s_stream_uri']);
-            $key = strtolower($s['s_orig_name']) . '||' . $normalizedUri;
-            $existingLookup[$key] ??= $s;
+            $nameKey = strtolower($s['s_orig_name']);
+            $existingByName[$nameKey] ??= $s;
+            $existingByUri[$s['s_stream_uri']] ??= $s;
         }
 
         $tempStreams = $this->db->get_all(
@@ -161,77 +145,110 @@ class SyncEngine
             return 0;
         }
 
-        $updates = [];
+        $uriUpdates = [];
+        $nameUpdates = [];
         $inserts = [];
         $unchanged = 0;
+        $processed = []; // Track processed stream IDs to avoid double-processing
 
         foreach ($tempStreams as $temp) {
-            $normalizedUri = $this->normalizeUri($temp['s_stream_uri']);
-            $key = strtolower($temp['s_orig_name']) . '||' . $normalizedUri;
+            $nameKey = strtolower($temp['s_orig_name']);
+            $tempUri = $temp['s_stream_uri'];
 
-            if (isset($existingLookup[$key])) {
-                $existing = $existingLookup[$key];
-
-                if ($this->hasChanges($existing, $temp)) {
-                    $updates[] = [$existing['id'], $temp];
+            // Check 1: Does s_orig_name exist?
+            if (isset($existingByName[$nameKey])) {
+                $existing = $existingByName[$nameKey];
+                
+                // Skip if already processed
+                if (isset($processed[$existing['id']])) {
+                    continue;
+                }
+                
+                // Update s_stream_uri ONLY if different
+                if ($existing['s_stream_uri'] !== $tempUri) {
+                    $uriUpdates[] = [$existing['id'], $tempUri];
                 } else {
                     $unchanged++;
                 }
-            } else {
-                $inserts[] = $temp;
+                
+                $processed[$existing['id']] = true;
+                continue;
             }
+
+            // Check 2: Does s_stream_uri exist?
+            if (isset($existingByUri[$tempUri])) {
+                $existing = $existingByUri[$tempUri];
+                
+                // Skip if already processed
+                if (isset($processed[$existing['id']])) {
+                    continue;
+                }
+                
+                // Update s_orig_name ONLY if different
+                if (strtolower($existing['s_orig_name']) !== $nameKey) {
+                    $nameUpdates[] = [$existing['id'], $temp['s_orig_name']];
+                } else {
+                    $unchanged++;
+                }
+                
+                $processed[$existing['id']] = true;
+                continue;
+            }
+
+            // Neither exist - insert as new
+            $inserts[] = $temp;
         }
 
         echo sprintf(
-            "Analysis: %s to update, %s to insert, %s unchanged\n",
-            number_format(count($updates)),
+            "Analysis: %s URI updates, %s name updates, %s to insert, %s unchanged\n",
+            number_format(count($uriUpdates)),
+            number_format(count($nameUpdates)),
             number_format(count($inserts)),
             number_format($unchanged)
         );
 
-        // Batch updates
-        if (!empty($updates)) {
-            echo "Updating existing streams...\n";
+        // Batch URI updates
+        if (!empty($uriUpdates)) {
+            echo "Updating stream URIs...\n";
             $updateCount = 0;
-            foreach ($updates as [$streamId, $data]) {
-                $updateData = [
-                    's_orig_name' => $data['s_orig_name'],
-                    's_stream_uri' => $data['s_stream_uri'],
-                    's_updated' => null
-                ];
-
-                if ($this->shouldSyncField('s_tvg_id')) {
-                    $updateData['s_tvg_id'] = $data['s_tvg_id'];
-                }
-                if ($this->shouldSyncField('s_tvg_logo')) {
-                    $updateData['s_tvg_logo'] = $data['s_tvg_logo'];
-                }
-                if ($this->shouldSyncField('s_tvg_group')) {
-                    $updateData['s_tvg_group'] = $data['s_group'];
-                }
-
-                $updateData['s_extras'] = $data['s_extras'];
-
+            foreach ($uriUpdates as [$streamId, $uri]) {
                 $this->db->update(
                     table: 'streams',
                     where: [new WhereClause('id', $streamId, ComparisonOperator::EQ)],
-                    data: $updateData
+                    data: ['s_stream_uri' => $uri, 's_updated' => null]
                 );
                 $updateCount++;
                 if ($updateCount % 500 === 0) {
                     echo sprintf("  Updated %s streams...\n", number_format($updateCount));
                 }
             }
-            echo sprintf("Updated %s streams\n", number_format(count($updates)));
+            echo sprintf("Updated %s stream URIs\n", number_format(count($uriUpdates)));
         }
 
-        // Batch inserts
+        // Batch name updates
+        if (!empty($nameUpdates)) {
+            echo "Updating stream names...\n";
+            $updateCount = 0;
+            foreach ($nameUpdates as [$streamId, $name]) {
+                $this->db->update(
+                    table: 'streams',
+                    where: [new WhereClause('id', $streamId, ComparisonOperator::EQ)],
+                    data: ['s_orig_name' => $name, 's_updated' => null]
+                );
+                $updateCount++;
+                if ($updateCount % 500 === 0) {
+                    echo sprintf("  Updated %s streams...\n", number_format($updateCount));
+                }
+            }
+            echo sprintf("Updated %s stream names\n", number_format(count($nameUpdates)));
+        }
+
+        // Batch inserts - full data for new streams
         if (!empty($inserts)) {
             echo "Inserting new streams...\n";
             $insertRecords = [];
             foreach ($inserts as $data) {
-                
-                $insertRecord = [
+                $insertRecords[] = [
                     'u_id' => $userId,
                     'p_id' => $providerId,
                     's_type_id' => $data['s_type_id'],
@@ -239,22 +256,12 @@ class SyncEngine
                     's_channel' => '0',
                     's_name' => $data['s_orig_name'],
                     's_orig_name' => $data['s_orig_name'],
-                    's_stream_uri' => $data['s_stream_uri']
+                    's_stream_uri' => $data['s_stream_uri'],
+                    's_tvg_id' => $data['s_tvg_id'],
+                    's_tvg_logo' => $data['s_tvg_logo'],
+                    's_tvg_group' => $data['s_group'],
+                    's_extras' => $data['s_extras']
                 ];
-
-                if ($this->shouldSyncField('s_tvg_id')) {
-                    $insertRecord['s_tvg_id'] = $data['s_tvg_id'];
-                }
-                if ($this->shouldSyncField('s_tvg_logo')) {
-                    $insertRecord['s_tvg_logo'] = $data['s_tvg_logo'];
-                }
-                if ($this->shouldSyncField('s_tvg_group')) {
-                    $insertRecord['s_tvg_group'] = $data['s_group'];
-                }
-
-                $insertRecord['s_extras'] = $data['s_extras'];
-
-                $insertRecords[] = $insertRecord;
             }
 
             $this->db->insert_many(
@@ -276,54 +283,7 @@ class SyncEngine
             ]
         );
 
-        return count($updates) + count($inserts);
+        return count($uriUpdates) + count($nameUpdates) + count($inserts);
     }
-
-    private function normalizeUri(string $uri): string
-    {
-        $fastDomains = ['pluto.tv', 'plex.tv', 'tubi.io', 'xumo.com', 'samsung.tv'];
-
-        $parsed = parse_url($uri);
-        $isFast = false;
-
-        if (isset($parsed['host'])) {
-            foreach ($fastDomains as $domain) {
-                if (str_contains($parsed['host'], $domain)) {
-                    $isFast = true;
-                    break;
-                }
-            }
-        }
-
-        if ($isFast) {
-            return ($parsed['scheme'] ?? 'http') . '://' . ($parsed['host'] ?? '') . ($parsed['path'] ?? '');
-        }
-
-        return $uri;
-    }
-
-    private function hasChanges(array $existing, array $temp): bool
-    {
-        $normalize = fn($val) => $val ?: null;
-
-        $fieldsToCheck = [
-            ['s_orig_name', 's_orig_name'],
-            ['s_stream_uri', 's_stream_uri'],
-            ['s_tvg_id', 's_tvg_id'],
-            ['s_tvg_group', 's_group'],
-            ['s_tvg_logo', 's_tvg_logo'],
-            ['s_extras', 's_extras']
-        ];
-
-        foreach ($fieldsToCheck as [$existingField, $tempField]) {
-            $existingVal = $normalize($existing[$existingField] ?? null);
-            $tempVal = $normalize($temp[$tempField] ?? null);
-
-            if ($existingVal !== $tempVal) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    
 }

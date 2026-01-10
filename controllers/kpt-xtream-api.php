@@ -9,15 +9,15 @@
  * @author Kevin Pirnie <me@kpirnie.com>
  */
 
-defined( 'KPTV_PATH' ) || die( 'Direct Access is not allowed!' );
+defined( 'KPT_PATH' ) || die( 'Direct Access is not allowed!' );
 
 use KPT\KPT;
 use KPT\Database;
 use KPT\Logger;
 
-if( ! class_exists( 'KPTV_Xtream_API' ) ) {
+if( ! class_exists( 'KPTV_XtreamAPI' ) ) {
 
-    class KPTV_Xtream_API extends Database {
+    class KPTV_XtreamAPI extends Database {
         
         private const TYPE_LIVE = 0;
         private const TYPE_VOD = 4;
@@ -28,7 +28,7 @@ if( ! class_exists( 'KPTV_Xtream_API' ) ) {
         private ?object $userRecord = null;
         
         public function __construct( ) {
-            parent::__construct( KPTV::get_setting( 'database' ) );
+            parent::__construct( KPT::get_setting( 'database' ) );
         }
 
         /**
@@ -124,7 +124,7 @@ if( ! class_exists( 'KPTV_Xtream_API' ) ) {
             
             // Method 1: Encrypted user ID (legacy/direct)
             if ( !empty($userParam) ) {
-                $decrypted = KPTV::decrypt($userParam);
+                $decrypted = KPT::decrypt($userParam);
                 if ( $decrypted && is_numeric($decrypted) ) {
                     $this->userId = (int)$decrypted;
                     // Use GET provider param for legacy URLs
@@ -137,7 +137,7 @@ if( ! class_exists( 'KPTV_Xtream_API' ) ) {
             
             // Method 2: Username is provider ID, password is encrypted user ID
             if ( !empty($password) ) {
-                $decrypted = KPTV::decrypt($password);
+                $decrypted = KPT::decrypt($password);
                 if ( $decrypted && is_numeric($decrypted) ) {
                     $this->userId = (int)$decrypted;
                     
@@ -180,7 +180,7 @@ if( ! class_exists( 'KPTV_Xtream_API' ) ) {
         private function getUserInfo(): void {
             
             $serverInfo = [
-                'url' => rtrim(KPTV_URI, '/'),
+                'url' => rtrim(KPT_URI, '/'),
                 'port' => '443',
                 'https_port' => '443',
                 'server_protocol' => 'https',

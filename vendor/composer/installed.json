@@ -159,7 +159,7 @@
                     "forward-command": false
                 }
             },
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "GuzzleHttp\\Promise\\": "src/"
