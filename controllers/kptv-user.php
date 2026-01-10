@@ -475,8 +475,8 @@ if( ! class_exists( 'KPTV_User' ) ) {
                 'lastName'  => KPTV::sanitize_string($input['frmLastName'] ?? ''),
                 'username'  => KPTV::sanitize_string($input['frmUsername'] ?? ''),
                 'email'     => KPTV::sanitize_string($input['frmMainEmail'] ?? ''),
-                'password1' => $input['frmPassword1'] ?? '',
-                'password2' => $input['frmPassword2'] ?? ''
+                'password1' => mb_trim($input['frmPassword1']) ?? '',
+                'password2' => mb_trim($input['frmPassword2']) ?? ''
             ];
         }
 

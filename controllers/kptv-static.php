@@ -51,7 +51,6 @@ if( ! class_exists( 'KPTV_Static' ) ) {
         const MONTH_IN_SECONDS = ( self::DAY_IN_SECONDS * 30 );
         const YEAR_IN_SECONDS = ( self::DAY_IN_SECONDS * 365 );
 
-
         /** 
          * view_configs
          * 
@@ -176,15 +175,10 @@ if( ! class_exists( 'KPTV_Static' ) ) {
                             'delprovider' => [
                                 'icon' => 'trash',
                                 'title' => 'Delete this Provider<br />(also delete\'s all associated streams)',
-                                'class' => 'action-callback',
+                                //'class' => 'action-callback',
                                 'success_message' => 'Provider and all it\'s streams have been deleted.',
                                 'error_message' => 'Failed to delete the provider.',
                                 'confirm' => 'Are you want to remove this provider and all it\'s streams?',
-                                'attributes' => [
-                                    'data-action' => 'delprovider',
-                                    'data-id' => '{id}',
-                                    'data-confirm' => 'Are you sure you want to delete this provider?',
-                                ],
                                 'callback' => function( $rowId, $rowData, $db, $tableName ) {
                                     
                                     // make sure we have a row ID
@@ -1650,19 +1644,11 @@ if( ! class_exists( 'KPTV_Static' ) ) {
         */
         public static function find_in_array( string $_needle, array $_haystack ) : bool {
             
-            // loop the array
-            foreach ( $_haystack as $_item ) {
-
-                // if the item contains the string
-                if ( false !== stripos( $_item, $_needle ) ) {
-                    
-                    // return true
-                    return true;
-                }
-            }
-        
-            // default return
-            return false;
+            // see if our item is in any haystack
+            return array_any(
+                $_haystack,
+                fn( $_item ) => stripos( $_item, $_needle ) !== false
+            );
 
         }
 
@@ -2130,7 +2116,10 @@ if( ! class_exists( 'KPTV_Static' ) ) {
         public static function str_contains_any( string $_to_search, array $_searching ) : bool {
 
             // filter down the string
-            return array_reduce( $_searching, fn( $a, $n ) => $a || str_contains( strtolower( $_to_search ), strtolower( $n ) ), false );
+            return array_any(
+                $_searching,
+                fn( $n ) => str_contains( strtolower( $_to_search ), strtolower( $n ) )
+            );
 
         }
 
@@ -2153,25 +2142,11 @@ if( ! class_exists( 'KPTV_Static' ) ) {
         */
         public static function str_contains_any_re( string $_to_search, array $_searching ) : bool {
 
-            // default
-            $_ret = false;
-
-            // loop over what we're searching for
-            foreach( $_searching as $_i ) {
-                
-                // setup out regex pattern
-                $_pattern = '~' . $_i . '~i';
-
-                // see if we have a match
-                $_matched = filter_var( preg_match( $_pattern, $_to_search ), FILTER_VALIDATE_BOOLEAN );
-
-                // append the regex match
-                $_ret = $_ret || $_matched;
-
-            }
-
-            // return
-            return $_ret;
+            // return if it was found
+            return array_any(
+                $_searching,
+                fn( $_i ) => (bool) preg_match( '~' . $_i . '~i', $_to_search )
+            );
 
         }
 
@@ -2391,47 +2366,25 @@ if( ! class_exists( 'KPTV_Static' ) ) {
         */
         public static function array_key_contains_Subset( array $array, string $subset, bool $caseSensitive = true ) : array|bool {
 
-            // Return false immediately if the array is empty.
+            // Return false immediately if the array is empty
             if ( empty( $array ) ) {
                 return false;
             }
 
-            // Loop through the array keys
-            foreach ( array_keys($array ) as $key ) {
+            // Use PHP 8.4's array_find_key to locate the first key containing the subset
+            // The callback receives both value and key, allowing us to search by key
+            $matchingKey = array_find_key(
+                $array,
+                fn( $value, $key ) => $caseSensitive
+                    // Case-sensitive: use str_contains for exact substring match
+                    ? str_contains( (string) $key, $subset )
+                    // Case-insensitive: use stripos which ignores case
+                    : stripos( (string) $key, $subset ) !== false
+            );
 
-                // If the key is not a string, convert it to a string
-                if ( ! is_string( $key ) ) {
-                    $key = ( string ) $key;
-                }
-
-                // if we need to check case sensitivity
-                if ( $caseSensitive ) {
-
-                    // check if the key contains the subset
-                    if ( str_contains( $key, $subset ) ) {
-
-                        // return the array item
-                        return $array[$key];
-
-                    }
-
-                // otherwise, do a case-insensitive check
-                } else {
-
-                    // check if the key contains the subset, case-insensitive
-                    if ( stripos( $key, $subset ) !== false ) {
-
-                        // return the array item
-                        return $array[$key];
-
-                    }
-
-                }
-
-            }
-
-            // default return
-            return false;
+            // If a matching key was found, return its associated value
+            // Otherwise return false to indicate no match
+            return $matchingKey !== null ? $array[$matchingKey] : false;
 
         }
 
@@ -2738,7 +2691,7 @@ if( ! class_exists( 'KPTV_Static' ) ) {
         public static function sanitize_string( string $_val ) : string {
 
             // return the sanitized string, or empty
-            return addslashes( $_val );
+            return addslashes( mb_trim( $_val ) );
 
         }
 
@@ -2836,7 +2789,7 @@ if( ! class_exists( 'KPTV_Static' ) ) {
             $string = strip_tags( $string );
 
             // return the trimmed value
-            return trim( $string );
+            return mb_trim( $string );
 
         }
 
@@ -2884,7 +2837,7 @@ if( ! class_exists( 'KPTV_Static' ) ) {
             if ( empty( $path ) ) return '/';
             $path = parse_url( $path, PHP_URL_PATH ) ?? '';
             $path = preg_replace('#/+#', '/', $path); // Only normalize multiple slashes
-            $path = trim( $path, '/' );
+            $path = mb_trim( $path, '/' );
             return $path === '' ? '/' : '/' . $path;
         }
 
