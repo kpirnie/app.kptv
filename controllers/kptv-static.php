@@ -175,11 +175,16 @@ if( ! class_exists( 'KPTV_Static' ) ) {
                         [
                             'delprovider' => [
                                 'icon' => 'trash',
-                                'title' => 'Delete this Provider',
-                                'class' => '',
+                                'title' => 'Delete this Provider<br />(also delete\'s all associated streams)',
+                                'class' => 'action-callback',
                                 'success_message' => 'Provider and all it\'s streams have been deleted.',
                                 'error_message' => 'Failed to delete the provider.',
                                 'confirm' => 'Are you want to remove this provider and all it\'s streams?',
+                                'attributes' => [
+                                    'data-action' => 'delprovider',
+                                    'data-id' => '{id}',
+                                    'data-confirm' => 'Are you sure you want to delete this provider?',
+                                ],
                                 'callback' => function( $rowId, $rowData, $db, $tableName ) {
                                     
                                     // make sure we have a row ID

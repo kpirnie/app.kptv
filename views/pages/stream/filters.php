@@ -29,7 +29,7 @@ $dbconf = [
 $dt = new DataTables( $dbconf );
 
 // setup the form fields
-$formFields = KPTV::view_configs( 'filters' ) -> form;
+$formFields = KPTV::view_configs( 'filters', userId: $userId ) -> form;
 
 // configure the datatable
 $dt -> table( 'kptv_stream_filters' )

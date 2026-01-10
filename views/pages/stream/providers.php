@@ -32,7 +32,7 @@ $dbconf = [
 $dt = new DataTables( $dbconf );
 
 // setup the form fields
-$formFieldsConfig = KPTV::view_configs( 'providers' ) -> form;
+$formFieldsConfig = KPTV::view_configs( 'providers', userId: $userId ) -> form;
 
 // setup the row actions - extract from view_configs
 $rowActionsConfig = KPTV::view_configs( 'providers', userForExport: $userForExport ) -> row;
@@ -89,7 +89,7 @@ KPTV::pull_header( );
     KPTV::include_view( 'common/control-panel', [ 'dt' => $dt ] );
     ?>
 </div>
-<div class="uk-margin">
+<div class="uk-margin the-datatable">
     <?php
 
     // write out the datatable component

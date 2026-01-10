@@ -535,6 +535,7 @@ class DataTablesJS {
                         }
 
                         if (actionConfig.callback) {
+
                             // Handle callback action
                             const icon = actionConfig.icon || 'link';
                             const title = actionConfig.title || '';
@@ -546,6 +547,7 @@ class DataTablesJS {
                             } else {
                                 html += '<a href="#" class="' + iconLinkClass + ' ' + className + '" title="' + title + '"';
                             }
+
                             html += ' data-action="' + actionKey + '"';
                             html += ' data-id="' + rowId + '"';
                             html += ' data-confirm="' + confirm + '"';
@@ -870,10 +872,13 @@ class DataTablesJS {
 
         // Find the action configuration
         let actionConfig = null;
+
         if (this.actionConfig.groups) {
             for (const group of this.actionConfig.groups) {
                 if (typeof group === 'object' && !Array.isArray(group)) {
+
                     if (group[action] && group[action].callback) {
+
                         actionConfig = group[action];
                         break;
                     }

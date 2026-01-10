@@ -402,6 +402,7 @@ a.uk-icon-link[uk-icon="plus"]:hover {
 
 .datatables-table tbody tr .uk-icon-link {
     opacity: 0.8;
+    margin: 2px !important;
 }
 
 /* ============================================
@@ -420,4 +421,8 @@ a.uk-icon-link[uk-icon="plus"]:hover {
 .sort-icon {
     color: var(--kptv-orange);
     margin-left: 4px;
+}
+
+.row-action {
+    text-align: right !important;
 }
